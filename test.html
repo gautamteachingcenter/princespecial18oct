@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- 🛡️ STRICT SESSION & AUTH GUARD -->
+    <script>
+        function safeRedirect(targetUrl) {
+            if (!targetUrl) return;
+            if (window.location.protocol === "blob:" || window.location.href.startsWith("blob:")) {
+                return;
+            }
+            try {
+                window.location.replace(targetUrl);
+            } catch (err) {
+                window.location.href = targetUrl;
+            }
+        }
+
+        const isBlobPreview = window.location.protocol === "blob:" || window.location.href.startsWith("blob:");
+
+        if (!isBlobPreview) {
+            if (localStorage.getItem("authPassed") !== "true" || sessionStorage.getItem("activeSession") !== "valid") {
+                localStorage.clear();
+                sessionStorage.clear();
+                safeRedirect("index.html");
+            }
+        } else {
+            if (!localStorage.getItem("name")) localStorage.setItem("name", "Demo Candidate");
+            if (!localStorage.getItem("roll")) localStorage.setItem("roll", "GTC-101");
+            if (!localStorage.getItem("class")) localStorage.setItem("class", "8th Standard");
+        }
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="referrer" content="no-referrer">
+    <title>Live Examination Room | Gautam Teaching Centre</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Mukta:wght@500;600;700;800&family=Hind:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- External CSS link with v7.0 cache buster -->
+    <link rel="stylesheet" href="test.css?v=7.0" onerror="this.onerror=null;this.href='css/test.css';">
+
+    <style>
+        :root {
+            --primary: #0284c7;
+            --primary-deep: #0369a1;
+            --primary-soft: #f0f9ff;
+            --primary-border: #bae6fd;
+            --accent: #4f46e5;
+            --accent-soft: #eef2ff;
+            --surface: #ffffff;
+            --surface-muted: #f8fafc;
+            --border: #e2e8f0;
+            --border-card: #cbd5e1;
+            --text-heading: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --warning: #f59e0b;
+            --warning-bg: #fffbeb;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --radius-xl: 26px;
+            --shadow-card: 0 20px 45px -12px rgba(15, 23, 42, 0.08), 0 0 1px 1px rgba(15, 23, 42, 0.04);
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        html, body {
+            overscroll-behavior-y: contain !important;
+            overscroll-behavior: none !important;
+            touch-action: pan-x pan-y;
+        }
+
+        body {
+            background-color: #f8fafc;
+            min-height: 100vh;
+            color: var(--text-heading);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            position: relative;
+            overflow-x: hidden;
+            padding: 12px 10px 40px;
+        }
+
+        /* Ambient Glowing Background Lights */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 440px;
+            height: 440px;
+            background: radial-gradient(circle, rgba(199, 210, 254, 0.35) 0%, transparent 70%);
+            top: -100px;
+            left: -100px;
+            border-radius: 50%;
+            filter: blur(85px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(186, 230, 253, 0.4) 0%, transparent 70%);
+            bottom: -90px;
+            right: -90px;
+            border-radius: 50%;
+            filter: blur(85px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .exam-container {
+            width: 100%;
+            max-width: 1060px;
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 20px 22px;
+            box-shadow: var(--shadow-card);
+            position: relative;
+            z-index: 10;
+            display: none;
+            margin: 0 auto;
+        }
+
+        .exam-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 15%;
+            right: 15%;
+            height: 3.5px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 14px;
+            border-bottom: 1.5px solid var(--border);
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .top-bar h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 19px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            color: var(--text-heading);
+            text-transform: uppercase;
+            line-height: 1.2;
+        }
+
+        .candidate-live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--primary-soft);
+            border: 1.2px solid var(--primary-border);
+            color: var(--primary-deep);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11.5px;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+            margin-top: 4px;
+        }
+
+        #timer {
+            background: linear-gradient(135deg, #0284c7, #2563eb);
+            color: #ffffff;
+            font-family: 'Outfit', sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+            padding: 8px 16px;
+            border-radius: 12px;
+            letter-spacing: 0.6px;
+            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.28);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        .lang-switch-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #ffffff;
+            border: 1.5px solid var(--border-card);
+            border-radius: 12px;
+            padding: 5px 10px;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+        }
+
+        .lang-switch-select {
+            background: transparent;
+            color: var(--text-heading);
+            font-size: 12.5px;
+            font-weight: 800;
+            border: none;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .palette-strip-container {
+            width: 100% !important;
+            display: block !important;
+            background: #f8fafc;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 12px 14px 10px;
+            margin-bottom: 18px !important;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02);
+        }
+
+        .palette-strip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .palette-strip-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 12.5px;
+            font-weight: 800;
+            color: var(--text-heading);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pad-legend-horizontal {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .pad-legend-horizontal .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .legend-answered { background: #10b981; border: 1px solid #059669; }
+        .legend-unanswered { background: #f1f5f9; border: 1px solid #cbd5e1; }
+        .legend-current { background: #0284c7; border: 1px solid #0369a1; }
+
+        /* Left-to-Right Horizontal Scrolling List */
+        .horizontal-pad-scroll {
+            display: flex !important;
+            flex-direction: row !important;
+            gap: 8px;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            padding: 4px 2px 8px;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
+            width: 100%;
+        }
+
+        .horizontal-pad-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .horizontal-pad-scroll::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 10px;
+        }
+
+        .horizontal-pad-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .pad-btn {
+            min-width: 38px;
+            width: 38px;
+            height: 38px;
+            flex-shrink: 0;
+            margin: 0;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.15s ease;
+            user-select: none;
+        }
+
+        .pad-btn:hover {
+            transform: scale(1.06);
+        }
+
+        .main-layout {
+            display: block;
+            width: 100%;
+        }
+
+        .question-side {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .question-box {
+            margin-bottom: 18px;
+        }
+
+        .question-meta-strip {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .question-box h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--primary-deep);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .marking-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--surface-muted);
+            border: 1.5px solid var(--border);
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11.5px;
+            font-weight: 800;
+            color: var(--text-muted);
+        }
+
+        .marking-pos { color: #059669; }
+        .marking-neg { color: #dc2626; }
+
+        #question {
+            font-size: 17.5px;
+            font-weight: 700;
+            color: var(--text-heading);
+            line-height: 1.7;
+            margin-bottom: 18px;
+            padding: 16px 18px;
+            background: var(--surface-muted);
+            border-left: 5px solid var(--primary);
+            border-radius: 16px;
+            word-break: break-word;
+            user-select: none;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option-container {
+            display: flex;
+            align-items: center;
+            background: #ffffff;
+            border: 1.8px solid var(--border);
+            border-radius: 15px;
+            padding: 13px 16px;
+            min-height: 52px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+        }
+
+        .option-container:hover {
+            background: var(--primary-soft);
+            border-color: var(--primary-border);
+            transform: translateY(-1px);
+        }
+
+        .option-container.selected {
+            background: #f0f9ff !important;
+            border-color: var(--primary) !important;
+            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.16);
+        }
+
+        .option-container input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 19px;
+            height: 19px;
+            border: 2px solid var(--border-card);
+            border-radius: 50%;
+            margin-right: 12px;
+            cursor: pointer;
+            flex-shrink: 0;
+            outline: none;
+            position: relative;
+            transition: border-color 0.2s ease;
+        }
+
+        .option-container input[type="radio"]:checked {
+            border-color: var(--primary);
+            background-color: var(--primary);
+            box-shadow: inset 0 0 0 3px #ffffff;
+        }
+
+        .option-container span {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-body);
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .option-container.selected span {
+            font-weight: 800;
+            color: var(--text-heading);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            border-top: 1.5px solid var(--border);
+            padding-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-nav, .btn-clear, .btn-submit {
+            padding: 12px 22px;
+            font-size: 13.5px;
+            font-weight: 800;
+            border-radius: 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            transition: all 0.2s ease;
+            outline: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-nav {
+            background: #ffffff;
+            border: 1.5px solid var(--border-card);
+            color: var(--text-heading);
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+        }
+
+        .btn-nav:hover:not(:disabled) {
+            border-color: var(--primary);
+            background: var(--primary-soft);
+            color: var(--primary-deep);
+        }
+
+        .btn-nav:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .btn-clear {
+            background: #ffffff;
+            border: 1.5px solid #fecaca;
+            color: #dc2626;
+        }
+
+        .btn-clear:hover {
+            background: var(--danger-bg);
+            border-color: var(--danger);
+        }
+
+        .btn-submit {
+            margin-left: auto;
+            background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+            border: none;
+            color: #ffffff;
+            box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.45);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px -4px rgba(37, 99, 235, 0.6);
+        }
+
+        #loadingOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99998;
+            transition: opacity 0.25s ease;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 0.85s linear infinite;
+            margin-bottom: 14px;
+        }
+
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+
+        #loadingText {
+            color: var(--text-heading);
+            font-size: 14.5px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .modal-glass {
+            background: #ffffff;
+            border: 1.5px solid var(--border);
+            border-radius: 24px;
+            max-width: 480px;
+            width: 100%;
+            padding: 30px 24px;
+            text-align: center;
+            box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.2);
+            position: relative;
+        }
+
+        .passcode-input {
+            width: 100%;
+            padding: 13px;
+            background: #f8fafc;
+            border: 1.5px solid var(--border-card);
+            border-radius: 12px;
+            color: #0f172a;
+            font-size: 15px;
+            text-align: center;
+            font-weight: 800;
+            letter-spacing: 2px;
+            outline: none;
+            box-sizing: border-box;
+            margin-bottom: 6px;
+        }
+
+        .star-rating {
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            user-select: none;
+            display: inline-block;
+        }
+
+        .star-rating:hover {
+            transform: scale(1.3);
+        }
+
+        /* 📱 Mobile Specific Styles */
+        @media (max-width: 768px) {
+            body { padding: 6px 6px 30px; }
+            .exam-container { padding: 14px 12px; border-radius: 18px; }
+            .top-bar { padding-bottom: 10px; margin-bottom: 12px; }
+            .top-bar h2 { font-size: 15.5px; }
+            .candidate-live-badge { font-size: 10.5px; padding: 3px 8px; }
+            #timer { font-size: 12px; padding: 6px 12px; border-radius: 10px; }
+            .palette-strip-container { padding: 10px 10px 6px; margin-bottom: 12px; border-radius: 14px; }
+            .palette-strip-title { font-size: 11.5px; }
+            .pad-legend-horizontal { gap: 8px; font-size: 9.5px; }
+            .pad-btn { min-width: 34px; width: 34px; height: 34px; font-size: 12px; border-radius: 8px; }
+            #question { font-size: 15px; line-height: 1.65; padding: 12px 14px; margin-bottom: 12px; border-radius: 14px; }
+            .options { gap: 8px; margin-bottom: 14px; }
+            .option-container { padding: 11px 12px; min-height: 48px; border-radius: 12px; }
+            .option-container input[type="radio"] { width: 17px; height: 17px; margin-right: 10px; }
+            .option-container span { font-size: 13.5px; line-height: 1.45; }
+            .buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding-top: 12px; }
+            .btn-nav, .btn-clear, .btn-submit { min-height: 44px; font-size: 12.5px; padding: 8px; border-radius: 11px; margin: 0; }
+            .btn-clear { grid-column: span 2; order: 4; min-height: 40px; }
+            .btn-submit { margin-left: 0; }
+        }
+    </style>
+
+    <script>
+        document.addEventListener('contextmenu', function(e) { 
+            e.preventDefault(); 
+            if (typeof showCustomNotification === 'function') {
+                showCustomNotification("Security Protocol: Right-click is restricted during examination.", "warning"); 
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === "F12" || (e.ctrlKey && e.shiftKey && ['I', 'C', 'J'].includes(e.key)) || (e.ctrlKey && e.key === 'U')) {
+                e.preventDefault(); 
+                return false;
+            }
+        });
+    </script>
+</head>
+
+<body>
+
+    <!-- ⏳ Anti-Hang Loading Screen Overlay -->
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <div id="loadingText">Verifying candidate eligibility... Please wait ⏳</div>
+    </div>
+
+    <!-- 🔒 Re-test Authorization Modal -->
+    <div id="retestAuthModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.74); backdrop-filter: blur(8px); z-index: 99997; justify-content: center; align-items: center; padding: 20px;">
+        <div class="modal-glass" style="border-top: 4.5px solid var(--warning);">
+            <div style="width: 60px; height: 60px; background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; font-size: 28px; color: #d97706;">
+                🔒
+            </div>
+            <h2 style="color: #0f172a; font-family: 'Outfit', sans-serif; font-size: 19px; margin-bottom: 8px; font-weight: 800; text-transform: uppercase;">
+                Re-Test Authorization Required
+            </h2>
+            <p id="retestModalDesc" style="color: #475569; font-size: 13px; margin-bottom: 18px; line-height: 1.55;">
+                A test submission has already been recorded for this Roll Number today. Invigilator master passcode is required for a re-attempt.
+            </p>
+            <div style="margin-bottom: 16px;">
+                <input type="password" id="adminPasscodeField" placeholder="INVIGILATOR MASTER PASSCODE" autocomplete="off" class="passcode-input">
+                <p id="retestPassError" style="color: #ef4444; font-size: 12px; margin-top: 6px; font-weight: 700; display: none;">Invalid passcode! Please verify with your invigilator.</p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button type="button" onclick="verifyRetestPasscode()" style="flex: 1; background: linear-gradient(135deg, #0284c7, #2563eb); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 800; font-size: 13px; text-transform: uppercase; cursor: pointer; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);">
+                    Authorize & Start 🚀
+                </button>
+                <button type="button" onclick="cancelRetestExit()" style="background: #e2e8f0; color: #334155; border: 1px solid #cbd5e1; padding: 12px 16px; border-radius: 12px; font-weight: 700; font-size: 13px; cursor: pointer;">
+                    Exit
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 📢 Custom Notification Dialog Modal -->
+    <div id="customDialogModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.74); backdrop-filter: blur(8px); z-index: 100000; justify-content: center; align-items: center; padding: 20px;">
+        <div class="modal-glass" style="max-width: 400px; padding: 26px 20px;">
+            <div id="customDialogIcon" style="font-size: 34px; margin-bottom: 10px;">⚠️</div>
+            <h3 id="customDialogTitle" style="color: #0f172a; font-family: 'Outfit', sans-serif; font-size: 17px; font-weight: 800; margin-bottom: 8px;">Notice</h3>
+            <p id="customDialogMsg" style="color: #334155; font-size: 13px; margin-bottom: 20px; line-height: 1.5;"></p>
+            <div id="customDialogActions" style="display: flex; gap: 10px; justify-content: center;">
+                <button type="button" id="customDialogOkBtn" style="background: linear-gradient(135deg, #0284c7, #2563eb); color: #fff; border: none; padding: 10px 24px; border-radius: 12px; font-weight: 700; font-size: 13.5px; cursor: pointer; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);">
+                    Confirm
+                </button>
+                <button type="button" id="customDialogCancelBtn" style="display: none; background: #e2e8f0; color: #475569; border: 1px solid #cbd5e1; padding: 10px 18px; border-radius: 12px; font-weight: 600; font-size: 13.5px; cursor: pointer;">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🎉 Premium Test Submission Success Modal -->
+    <div id="premiumSuccessModal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.78); backdrop-filter: blur(10px); z-index: 99999; justify-content: center; align-items: center; padding: 20px;">
+        <div class="modal-glass" style="max-width: 480px; padding: 34px 24px;">
+            <div style="width: 66px; height: 66px; background: #ecfdf5; border: 1.5px solid #10b981; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; font-size: 32px; color: #10b981; box-shadow: 0 8px 20px -4px rgba(16, 185, 129, 0.35);">
+                ✓
+            </div>
+
+            <h2 id="successModalHeading" style="color: #0f172a; font-family: 'Outfit', sans-serif; font-size: 21px; margin-bottom: 8px; font-weight: 800; letter-spacing: 0.5px;">
+                Test Submitted Successfully! 🎉
+            </h2>
+            <p id="successModalSubtitle" style="color: #64748b; font-size: 13px; margin-bottom: 20px; line-height: 1.55;">
+                Your responses have been recorded securely in Google Sheets. The official results will be announced soon on the institute results portal.
+            </p>
+
+            <div style="height: 1px; background: linear-gradient(90deg, transparent, #cbd5e1, transparent); margin-bottom: 20px;"></div>
+
+            <div id="feedbackContainer">
+                <h3 style="color: #0284c7; font-family: 'Outfit', sans-serif; font-size: 14.5px; font-weight: 800; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px;">
+                    How was your test experience?
+                </h3>
+                <p style="color: #475569; font-size: 12px; margin-bottom: 12px;">Rate your test experience today:</p>
+                
+                <div id="starRatingGroup" style="display: flex; justify-content: center; gap: 12px; margin-bottom: 16px; font-size: 32px;">
+                    <span class="star-rating" data-val="1" onclick="setRating(1)" style="color: #f59e0b;">★</span>
+                    <span class="star-rating" data-val="2" onclick="setRating(2)" style="color: #f59e0b;">★</span>
+                    <span class="star-rating" data-val="3" onclick="setRating(3)" style="color: #f59e0b;">★</span>
+                    <span class="star-rating" data-val="4" onclick="setRating(4)" style="color: #f59e0b;">★</span>
+                    <span class="star-rating" data-val="5" onclick="setRating(5)" style="color: #f59e0b;">★</span>
+                </div>
+
+                <textarea id="feedbackText" placeholder="Write any suggestions or remarks (optional)..." style="width: 100%; height: 70px; background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 10px; color: #0f172a; font-size: 13px; resize: none; box-sizing: border-box; margin-bottom: 16px; outline: none; font-family: inherit;"></textarea>
+
+                <button type="button" onclick="submitStudentFeedback()" style="background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%); color: white; border: none; padding: 13px 20px; border-radius: 12px; font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.6px; cursor: pointer; width: 100%; box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.45);">
+                    Submit Feedback & Exit 🚀
+                </button>
+            </div>
+
+            <div id="feedbackThanks" style="display: none; padding: 14px 0;">
+                <p style="color: #10b981; font-weight: 800; font-size: 16px; margin-bottom: 6px;">Thank You! Your feedback is recorded. 🙏</p>
+                <p style="color: #64748b; font-size: 12.5px;">You may now safely close this window.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 📱 EXAMINATION MAIN CONTAINER -->
+    <main class="exam-container">
+        <!-- Top CBT Examination Control Bar -->
+        <div class="top-bar">
+            <div>
+                <h2>GAUTAM TEACHING CENTRE</h2>
+                <div class="candidate-live-badge">
+                    <span>👨‍🎓</span>
+                    <span id="candidateLiveInfo">Candidate Loading...</span>
+                </div>
+            </div>
+            
+            <!-- Language Switcher & Timer Container -->
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <div class="lang-switch-badge">
+                    <span style="font-size: 13px;">🌐</span>
+                    <select id="examLangSelect" class="lang-switch-select" onchange="changeQuestionLanguage(this.value)">
+                        <option value="hi">🇮🇳 हिन्दी</option>
+                        <option value="en">🇬🇧 English</option>
+                    </select>
+                </div>
+                <div id="timer">⏱ Time Left : 60:00</div>
+            </div>
+        </div>
+
+        <!-- 🔢 100% TOP-LOCKED HORIZONTAL QUESTION PALETTE -->
+        <section class="palette-strip-container">
+            <div class="palette-strip-header">
+                <span class="palette-strip-title">Question Palette (1 - <span id="paletteTotalCount">100</span>)</span>
+                
+                <div class="pad-legend-horizontal">
+                    <div class="legend-item">
+                        <div class="legend-indicator legend-answered"></div>
+                        <span>Answered</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-indicator legend-unanswered"></div>
+                        <span>Unanswered</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-indicator legend-current"></div>
+                        <span>Current</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Horizontal Swipe/Scroll List (Left-Right) -->
+            <div id="questionList" class="horizontal-pad-scroll"></div>
+        </section>
+
+        <div class="main-layout">
+            <!-- 📝 Question and Options Section (Follows the top palette) -->
+            <section class="question-side">
+                <div class="question-box">
+                    <div class="question-meta-strip">
+                        <h3>Question <span id="qno">1</span> of <span id="totalQuestionsCount">100</span></h3>
+                        <div class="marking-pill">
+                            <span class="marking-pos">+2.00</span>
+                            <span>•</span>
+                            <span class="marking-neg">-0.25</span>
+                        </div>
+                    </div>
+
+                    <p id="question">Question will appear here...</p>
+
+                    <!-- Exact radio values mapped (0, 1, 2, 3) -->
+                    <div class="options">
+                        <label class="option-container"><input type="radio" name="answer" value="0"><span id="op1">Option A</span></label>
+                        <label class="option-container"><input type="radio" name="answer" value="1"><span id="op2">Option B</span></label>
+                        <label class="option-container"><input type="radio" name="answer" value="2"><span id="op3">Option C</span></label>
+                        <label class="option-container"><input type="radio" name="answer" value="3"><span id="op4">Option D</span></label>
+                    </div>
+                </div>
+
+                <!-- Touch-friendly & reliable buttons with direct onclick bindings -->
+                <div class="buttons">
+                    <button id="prevBtn" type="button" class="btn-nav" onclick="prevQuestion()">Previous</button>
+                    <button id="clearBtn" type="button" class="btn-clear" onclick="clearSelectedResponse()">Clear Response</button>
+                    <button id="nextBtn" type="button" class="btn-nav" onclick="nextQuestion()">Next</button>
+                    <button id="submitBtn" type="button" class="btn-submit" onclick="submitTestFromButton()">Submit Test 🚀</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Essential Application Configuration -->
+    <script>
+        window.localTimeTracker = Date.now();
+        window.SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQysEVoQmSS6w_cEeLYK1g95T16cUT5taIdjXfdDLUsOggqFnVMU5GDrl3C3c-Olvt/exec";
+
+        // Display current candidate info on header badge
+        document.addEventListener("DOMContentLoaded", function() {
+            var sName = localStorage.getItem("name") || "Candidate";
+            var sRoll = localStorage.getItem("roll") || "GTC";
+            var sClass = localStorage.getItem("class") || "";
+            var badgeEl = document.getElementById("candidateLiveInfo");
+            if (badgeEl) {
+                badgeEl.textContent = sName + " (" + sRoll + (sClass ? " • " + sClass : "") + ")";
+            }
+        });
+    </script>
+
+    <!-- 🤖 Google Official MediaPipe Face Detection AI Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/face_detection.js" crossorigin="anonymous"></script>
+
+    <!-- Questions Data Link (with v7.0 cache buster) -->
+    <script src="js/questions.js?v=7.0" onerror="this.onerror=null;this.src='questions.js';"></script>
+    
+    <!-- Test Logic Script (with v7.0 cache buster) -->
+    <script src="js/test.js?v=7.0" onerror="this.onerror=null;this.src='test.js';"></script>
+
+    <!-- 🛡️ SAFE ANTI-FREEZE WATCHDOG -->
+    <script>
+        setTimeout(function() {
+            var retestModal = document.getElementById("retestAuthModal");
+            if (retestModal && retestModal.style.display === "flex") {
+                return;
+            }
+            var loader = document.getElementById("loadingOverlay");
+            var exam = document.querySelector(".exam-container");
+            if (loader && loader.style.display !== "none" && (!retestModal || retestModal.style.display !== "flex")) {
+                loader.style.display = "none";
+                loader.style.visibility = "hidden";
+            }
+            if (exam && exam.style.display !== "block" && (!retestModal || retestModal.style.display !== "flex")) {
+                exam.style.display = "block";
+                exam.style.visibility = "visible";
+            }
+        }, 1800);
+    </script>
+</body>
+</html>

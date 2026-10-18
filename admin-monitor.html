@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="referrer" content="no-referrer">
+    <title>Master Proctor Command Center | Gautam Teaching Centre</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Mukta:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #0284c7;
+            --primary-deep: #0369a1;
+            --primary-soft: #f0f9ff;
+            --primary-border: #bae6fd;
+            --accent: #4f46e5;
+            --accent-soft: #eef2ff;
+            --danger: #ef4444;
+            --danger-deep: #dc2626;
+            --danger-bg: #fef2f2;
+            --danger-border: #fecaca;
+            --warning: #f59e0b;
+            --warning-deep: #b45309;
+            --warning-bg: #fffbeb;
+            --warning-border: #fde68a;
+            --success: #10b981;
+            --success-deep: #059669;
+            --success-bg: #ecfdf5;
+            --success-border: #a7f3d0;
+            --bg-page: #f8fafc;
+            --surface: #ffffff;
+            --surface-muted: #f1f5f9;
+            --border: #e2e8f0;
+            --border-card: #cbd5e1;
+            --text-heading: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --radius-xl: 26px;
+            --shadow-card: 0 20px 45px -12px rgba(15, 23, 42, 0.08), 0 0 1px 1px rgba(15, 23, 42, 0.04);
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            min-height: 100vh;
+            color: var(--text-heading);
+            padding: 18px 14px 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Glowing Background Lights */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 480px;
+            height: 480px;
+            background: radial-gradient(circle, rgba(199, 210, 254, 0.4) 0%, transparent 70%);
+            top: -100px;
+            left: -100px;
+            border-radius: 50%;
+            filter: blur(85px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            width: 440px;
+            height: 440px;
+            background: radial-gradient(circle, rgba(186, 230, 253, 0.45) 0%, transparent 70%);
+            bottom: -90px;
+            right: -90px;
+            border-radius: 50%;
+            filter: blur(85px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .portal-header {
+            width: 100%;
+            max-width: 1040px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo-icon {
+            width: 42px;
+            height: 42px;
+            background: var(--primary-soft);
+            border: 1.5px solid var(--primary-border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+            user-select: none;
+        }
+
+        .brand-text h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: var(--text-heading);
+            text-transform: uppercase;
+            line-height: 1.2;
+        }
+
+        .brand-text p {
+            font-size: 10.5px;
+            color: var(--primary-deep);
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+        }
+
+        .header-status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--danger-bg);
+            border: 1.5px solid var(--danger-border);
+            color: var(--danger-deep);
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ef4444;
+            box-shadow: 0 0 8px #ef4444;
+            animation: pulseDot 1.4s infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.3; transform: scale(0.8); }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1040px;
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 30px 26px;
+            box-shadow: var(--shadow-card);
+            position: relative;
+            z-index: 10;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .stat-card {
+            background: #f8fafc;
+            border: 1.5px solid var(--border);
+            border-radius: 18px;
+            padding: 16px 14px;
+            text-align: center;
+            transition: all 0.25s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px -4px rgba(15, 23, 42, 0.06);
+        }
+
+        .stat-card.alert {
+            border-color: var(--danger-border);
+            background: var(--danger-bg);
+        }
+
+        .stat-val {
+            font-family: 'Outfit', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--text-heading);
+            line-height: 1.1;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tab-bar {
+            display: flex;
+            background: var(--surface-muted);
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
+            padding: 5px;
+            gap: 6px;
+            margin-bottom: 22px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 16px;
+            background: none;
+            border: none;
+            border-radius: 12px;
+            color: var(--text-muted);
+            font-size: 13.5px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .tab-btn.active {
+            background: #ffffff;
+            color: var(--primary);
+            box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+        }
+
+        .section-box {
+            background: #f8fafc;
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            padding: 22px 20px;
+            margin-bottom: 20px;
+        }
+
+        .box-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 14.5px;
+            font-weight: 800;
+            color: var(--primary-deep);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .action-chip-btn {
+            background: #ffffff;
+            border: 1.5px solid var(--border-card);
+            color: var(--text-heading);
+            padding: 7px 14px;
+            border-radius: 11px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+            transition: all 0.2s ease;
+        }
+
+        .action-chip-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background: var(--primary-soft);
+            transform: translateY(-1px);
+        }
+
+        .spin-icon { 
+            display: inline-block; 
+            transition: transform 0.4s ease; 
+        }
+
+        .spinning { 
+            animation: rotateSpin 0.75s linear infinite; 
+        }
+
+        @keyframes rotateSpin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+
+        .search-box { 
+            flex: 1; 
+            min-width: 220px; 
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 11px 16px;
+            background: #ffffff;
+            border: 1.5px solid var(--border-card);
+            border-radius: 12px;
+            color: var(--text-heading);
+            font-size: 13.5px;
+            font-weight: 600;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+        }
+
+        .filter-pills { 
+            display: flex; 
+            gap: 6px; 
+            flex-wrap: wrap;
+        }
+
+        .pill-btn {
+            background: #ffffff;
+            border: 1.5px solid var(--border-card);
+            color: var(--text-muted);
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .pill-btn.active {
+            border-color: var(--primary);
+            background: #e0f2fe;
+            color: var(--primary-deep);
+            font-weight: 800;
+        }
+
+        .student-roster {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 420px;
+            overflow-y: auto;
+            padding: 2px;
+        }
+
+        .student-chip {
+            background: #ffffff;
+            border: 1.8px solid var(--border);
+            padding: 14px 18px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+            transition: all 0.2s ease;
+        }
+
+        .student-chip:hover, .student-chip.selected {
+            border-color: var(--primary);
+            background: #f0f9ff;
+            transform: translateY(-1px);
+        }
+
+        .student-chip.flagged {
+            border-color: var(--danger) !important;
+            background: var(--danger-bg) !important;
+            box-shadow: 0 0 14px rgba(239, 68, 68, 0.22);
+        }
+
+        .chip-left { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 3px; 
+        }
+
+        .chip-name { 
+            font-size: 15px; 
+            font-weight: 800; 
+            color: var(--text-heading); 
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chip-roll { 
+            font-size: 12px; 
+            color: var(--primary-deep); 
+            font-weight: 700; 
+        }
+
+        .chip-badge {
+            font-size: 11.5px;
+            font-weight: 800;
+            padding: 6px 12px;
+            border-radius: 10px;
+            text-align: right;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .badge-normal { 
+            background: #ecfdf5; 
+            color: #059669; 
+            border: 1px solid #a7f3d0; 
+        }
+
+        .badge-alert { 
+            background: #fef2f2; 
+            color: #dc2626; 
+            border: 1px solid #fecaca; 
+            animation: pulseDot 1.2s infinite; 
+        }
+
+        .badge-offline {
+            background: #f1f5f9;
+            color: #64748b;
+            border: 1px solid #cbd5e1;
+        }
+
+        .field-label {
+            font-size: 12px;
+            font-weight: 800;
+            color: #475569;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            display: block;
+            letter-spacing: 0.5px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 13px 16px;
+            background: #ffffff;
+            border: 1.5px solid var(--border-card);
+            border-radius: 14px;
+            color: var(--text-heading);
+            font-size: 14px;
+            font-weight: 600;
+            outline: none;
+            margin-bottom: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .input-field:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3.5px rgba(2, 132, 199, 0.12);
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .btn-quick {
+            background: #ffffff;
+            border: 1.5px solid var(--border-card);
+            color: var(--text-heading);
+            padding: 11px 14px;
+            border-radius: 12px;
+            font-size: 12.5px;
+            font-weight: 700;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+        }
+
+        .btn-quick:hover {
+            border-color: var(--warning);
+            background: #fffbeb;
+            color: var(--warning-deep);
+            transform: translateY(-1px);
+        }
+
+        .btn-send {
+            width: 100%;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 14px;
+            font-size: 14.5px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px -4px rgba(239, 68, 68, 0.45);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-send:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -4px rgba(239, 68, 68, 0.6);
+        }
+
+        .submission-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 440px;
+            overflow-y: auto;
+        }
+
+        .sub-row {
+            background: #ffffff;
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+            transition: transform 0.2s;
+        }
+
+        .sub-row:hover {
+            transform: translateY(-1px);
+            border-color: var(--primary-border);
+        }
+
+        .sub-score {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 900;
+            color: var(--primary-deep);
+        }
+
+        .sub-time-taken-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            color: #166534;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .sub-tag {
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 8px;
+            letter-spacing: 0.4px;
+            display: inline-block;
+            margin-top: 4px;
+        }
+
+        .tag-pass { 
+            background: #ecfdf5; 
+            color: #059669; 
+            border: 1px solid #a7f3d0; 
+        }
+
+        .tag-fail { 
+            background: #fef2f2; 
+            color: #dc2626; 
+            border: 1px solid #fecaca; 
+        }
+
+        #statusNotice {
+            margin-top: 14px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: center;
+            display: none;
+        }
+
+        .toast-success { 
+            background: #ecfdf5; 
+            color: #059669; 
+            border: 1.5px solid #a7f3d0; 
+        }
+
+        .toast-error { 
+            background: #fef2f2; 
+            color: #dc2626; 
+            border: 1.5px solid #fecaca; 
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .quick-actions { grid-template-columns: 1fr; }
+            .container { padding: 20px 14px; }
+            .portal-header { padding: 10px 14px; }
+            .brand-text h3 { font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="portal-header">
+        <div class="header-brand">
+            <div class="brand-logo-icon">🎓</div>
+            <div class="brand-text">
+                <h3>GAUTAM TEACHING CENTRE</h3>
+                <p>Proctor Command Center 2026</p>
+            </div>
+        </div>
+        <div class="header-status-pill">
+            <span class="pulse-dot"></span>
+            <span>Live Monitor Active</span>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- 4-Card Summary Counters -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-val" id="statOnline" style="color: var(--primary);">0</div>
+                <div class="stat-label">Live Active</div>
+            </div>
+            <div class="stat-card alert">
+                <div class="stat-val" id="statAlerts" style="color: #dc2626;">0</div>
+                <div class="stat-label">Suspicious Flags 🚨</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="statSubmitted" style="color: #059669;">0</div>
+                <div class="stat-label">Submitted Tests</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="statTotal" style="color: #475569;">0</div>
+                <div class="stat-label">Total Registered</div>
+            </div>
+        </div>
+
+        <!-- View Tabs -->
+        <div class="tab-bar">
+            <button type="button" class="tab-btn active" id="tabBtnRoster" onclick="switchView('roster')">
+                📡 Live Proctoring & Intercom
+            </button>
+            <button type="button" class="tab-btn" id="tabBtnSubmissions" onclick="switchView('submissions')">
+                📊 Completed Results Stream
+            </button>
+        </div>
+
+        <div id="viewRoster">
+            <div class="section-box">
+                <div class="box-title">
+                    <div>
+                        <span>Active Candidates Roster</span>
+                        <span id="lastUpdatedTime" style="font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: none; margin-left: 6px;"></span>
+                    </div>
+
+                    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                        <button type="button" id="btnSoundAlertToggle" class="action-chip-btn" onclick="toggleAudioAlerts()">
+                            <span id="soundAlertIcon">🔔</span>
+                            <span id="soundAlertLabel">Sound: ON</span>
+                        </button>
+                        <button type="button" id="btnRefresh" class="action-chip-btn" onclick="fetchActiveCandidates()">
+                            <span id="refreshIcon" class="spin-icon">🔄</span>
+                            <span id="refreshLabel">Refresh</span>
+                        </button>
+                        <button type="button" onclick="testPoliceSiren()" class="action-chip-btn" style="background: var(--danger-bg); border-color: #fecaca; color: #dc2626;">
+                            🚨 Siren Test
+                        </button>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <div class="search-box">
+                        <input type="text" id="candidateSearchInput" class="search-input" placeholder="🔍 Search candidate by name or roll..." oninput="filterRosterList()">
+                    </div>
+                    <div class="filter-pills">
+                        <button type="button" class="pill-btn active" id="filterAll" onclick="setRosterFilter('ALL')">All</button>
+                        <button type="button" class="pill-btn" id="filterFlagged" onclick="setRosterFilter('FLAGGED')">🚨 Alerts Only</button>
+                        <button type="button" class="pill-btn" id="filterNormal" onclick="setRosterFilter('NORMAL')">🟢 Normal</button>
+                    </div>
+                </div>
+                
+                <div id="studentRoster" class="student-roster">
+                    <p style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 22px; font-weight: 600;">
+                        Connecting to testing server and synchronizing roster... ⏳
+                    </p>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <div class="box-title">
+                    <span>Broadcast Live Intercom / Warning</span>
+                    <button type="button" onclick="setTargetToAll()" style="background: var(--danger-bg); border: 1.5px solid #fecaca; color: #dc2626; padding: 5px 12px; border-radius: 8px; font-size: 11.5px; font-weight: 800; cursor: pointer;">
+                        📢 Broadcast to ALL Candidates
+                    </button>
+                </div>
+
+                <label class="field-label" for="targetRoll">Target Candidate Roll Number</label>
+                <input type="text" id="targetRoll" class="input-field" placeholder="Click any student card above or type roll (e.g. GTC-104 or ALL)">
+
+                <label class="field-label">Quick Warning Presets (One-Click Hindi Audio)</label>
+                <div class="quick-actions">
+                    <button type="button" class="btn-quick" onclick="setPreset('अपनी नज़रें स्क्रीन पर रखें, नीचे देखना सख्त मना है!')">
+                        👀 नीचे मत देखो!
+                    </button>
+                    <button type="button" class="btn-quick" onclick="setPreset('बातचीत ना करें, आप कैमरे और शिक्षक की निगरानी में हैं!')">
+                        🗣️ बात मत करो!
+                    </button>
+                    <button type="button" class="btn-quick" onclick="setPreset('मोबाइल का कैमरा सीधा रखें, आपका चेहरा स्पष्ट दिखना चाहिए!')">
+                        📱 कैमरा सीधा करो!
+                    </button>
+                    <button type="button" class="btn-quick" onclick="setPreset('अंतिम चेतावनी... संदिग्ध गतिविधि पकड़ी गई है, परीक्षा रद्द हो जाएगी!')">
+                        🚨 अंतिम चेतावनी!
+                    </button>
+                    <button type="button" class="btn-quick" onclick="setPreset('परीक्षा समाप्त होने में केवल 5 मिनट शेष हैं!')">
+                        ⏰ 5 मिनट शेष हैं!
+                    </button>
+                    <button type="button" class="btn-quick" onclick="setPreset('सभी प्रश्नों को जांच लें और समय पर टेस्ट सबमिट करें!')">
+                        📝 सबमिट करने की तैयारी करें!
+                    </button>
+                </div>
+
+                <label class="field-label" for="warningMessage">Custom Warning Message</label>
+                <input type="text" id="warningMessage" class="input-field" placeholder="Type custom message to announce on candidate phone...">
+
+                <label class="field-label" for="masterPass">Master Invigilator Passcode</label>
+                <input type="password" id="masterPass" class="input-field" value="GTC#2000" placeholder="GTC#2000 or GTC@2026">
+
+                <button type="button" class="btn-send" onclick="sendProctorWarning()">
+                    <span>Broadcast Police Siren Warning 🚨</span>
+                </button>
+
+                <div id="statusNotice"></div>
+            </div>
+        </div>
+
+        <div id="viewSubmissions" style="display: none;">
+            <div class="section-box">
+                <div class="box-title">
+                    <span>Recent Completed Submissions</span>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="button" onclick="exportSubmissionsToCSV()" class="action-chip-btn" style="background: var(--primary-soft); border-color: #bae6fd; color: var(--primary-deep);">
+                            📊 Export CSV
+                        </button>
+                        <button type="button" onclick="window.print()" class="action-chip-btn" style="background: var(--success-bg); border-color: #a7f3d0; color: #059669;">
+                            🖨️ Print Report
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="submissionsList" class="submission-list">
+                    <p style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 22px; font-weight: 600;">
+                        Loading recent examination submissions... ⏳
+                    </p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQysEVoQmSS6w_cEeLYK1g95T16cUT5taIdjXfdDLUsOggqFnVMU5GDrl3C3c-Olvt/exec";
+
+        // Map-based deduplication store
+        let rawStudentsMap = new Map();
+        let cachedSubmissionsList = [];
+        let currentFilter = 'ALL';
+        let isFetching = false;
+        let isAudioAlertEnabled = true;
+        let lastKnownFlaggedCount = 0;
+
+        function switchView(viewName) {
+            const vRoster = document.getElementById("viewRoster");
+            const vSub = document.getElementById("viewSubmissions");
+            const btnRoster = document.getElementById("tabBtnRoster");
+            const btnSub = document.getElementById("tabBtnSubmissions");
+
+            if (viewName === 'roster') {
+                vRoster.style.display = "block";
+                vSub.style.display = "none";
+                btnRoster.classList.add('active');
+                btnSub.classList.remove('active');
+            } else {
+                vRoster.style.display = "none";
+                vSub.style.display = "block";
+                btnRoster.classList.remove('active');
+                btnSub.classList.add('active');
+            }
+        }
+
+        function setPreset(text) {
+            document.getElementById("warningMessage").value = text;
+        }
+
+        function setTargetToAll() {
+            document.getElementById("targetRoll").value = "ALL";
+            document.querySelectorAll('.student-chip').forEach(el => el.classList.remove('selected'));
+            showNotice("Target set to ALL active candidates 📢", true);
+        }
+
+        function selectCandidate(roll) {
+            document.getElementById("targetRoll").value = roll;
+            document.querySelectorAll('.student-chip').forEach(el => el.classList.remove('selected'));
+            const safeKey = String(roll).replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+            const targetEl = document.getElementById("chip-" + safeKey);
+            if (targetEl) targetEl.classList.add('selected');
+        }
+
+        function setRosterFilter(filterType) {
+            currentFilter = filterType;
+            document.getElementById('filterAll').classList.toggle('active', filterType === 'ALL');
+            document.getElementById('filterFlagged').classList.toggle('active', filterType === 'FLAGGED');
+            document.getElementById('filterNormal').classList.toggle('active', filterType === 'NORMAL');
+            filterRosterList();
+        }
+
+        function toggleAudioAlerts() {
+            isAudioAlertEnabled = !isAudioAlertEnabled;
+            const icon = document.getElementById("soundAlertIcon");
+            const label = document.getElementById("soundAlertLabel");
+            if (icon && label) {
+                icon.textContent = isAudioAlertEnabled ? "🔔" : "🔕";
+                label.textContent = isAudioAlertEnabled ? "Sound: ON" : "Sound: OFF";
+            }
+        }
+
+        function filterRosterList() {
+            const searchVal = document.getElementById("candidateSearchInput").value.trim().toLowerCase();
+            const rosterEl = document.getElementById("studentRoster");
+
+            const studentList = Array.from(rawStudentsMap.values());
+
+            if (!studentList || studentList.length === 0) {
+                rosterEl.innerHTML = `
+                    <p style="color: var(--text-muted); font-size: 13.5px; text-align: center; padding: 22px; font-weight: 600; line-height: 1.6;">
+                        अभी कोई भी छात्र ऑनलाइन परीक्षा नहीं दे रहा है।<br>
+                        <span style="font-size: 11.5px; color: #94a3b8;">(जैसे ही कोई छात्र परीक्षा शुरू करेगा, उसका कार्ड यहाँ लाइव दिखाई देगा)</span>
+                    </p>
+                `;
+                return;
+            }
+
+            let filtered = studentList.filter(st => {
+                const sName = String(st.name || "").toLowerCase();
+                const sRoll = String(st.roll || "").toLowerCase();
+                const matchSearch = sName.includes(searchVal) || sRoll.includes(searchVal);
+                const isFlagged = st.incident && st.incident !== "Normal";
+                
+                if (!matchSearch) return false;
+                if (currentFilter === 'FLAGGED') return isFlagged;
+                if (currentFilter === 'NORMAL') return !isFlagged;
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                rosterEl.innerHTML = `<p style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 16px; font-weight: 600;">कोई छात्र नहीं मिला। फ़िल्टर बदल कर देखें।</p>`;
+                return;
+            }
+
+            let html = "";
+            const currentSelectedRoll = document.getElementById("targetRoll").value.trim().toUpperCase();
+
+            filtered.forEach(st => {
+                const isFlagged = st.incident && st.incident !== "Normal";
+                const isOffline = st.isOffline === true;
+                const qNum = st.qno || 1;
+                
+                let badgeClass = "chip-badge badge-normal";
+                let incidentText = `🟢 Live (Q${qNum})`;
+
+                if (isOffline) {
+                    badgeClass = "chip-badge badge-offline";
+                    incidentText = `⚪ Offline (Q${qNum})`;
+                } else if (isFlagged) {
+                    badgeClass = "chip-badge badge-alert";
+                    incidentText = `🚨 [Q${qNum}] ${st.incident}`;
+                }
+
+                // 🌟 Unique Card ID combining Roll and Name to avoid overlap
+                const safeCardKey = String((st.roll || '') + '_' + (st.name || '')).replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+                const isSelected = currentSelectedRoll === String(st.roll || '').toUpperCase();
+                const chipClass = `student-chip ${isFlagged ? 'flagged' : ''} ${isSelected ? 'selected' : ''}`.trim();
+
+                html += `
+                    <div id="chip-${safeCardKey}" class="${chipClass}" onclick="selectCandidate('${st.roll || ''}')">
+                        <div class="chip-left">
+                            <span class="chip-name">
+                                ${st.name || 'Candidate'}
+                                <span style="font-size: 11px; font-weight: 700; color: #64748b; background: #f1f5f9; padding: 2px 8px; border-radius: 6px;">${st.class || 'Student'}</span>
+                                <span style="font-size: 11px; font-weight: 800; color: #0284c7; background: #e0f2fe; border: 1px solid #bae6fd; padding: 2px 8px; border-radius: 6px;">At: Q${qNum}</span>
+                            </span>
+                            <span class="chip-roll">Roll: ${st.roll || 'N/A'} • <b style="color: #0369a1; font-weight: 800;">Current Question: Q${qNum}</b> • Ping: ${st.lastPing || 'Just now'}</span>
+                        </div>
+                        <span class="${badgeClass}">${incidentText}</span>
+                    </div>
+                `;
+            });
+            rosterEl.innerHTML = html;
+        }
+
+        async function fetchActiveCandidates() {
+            if (isFetching) return;
+            isFetching = true;
+
+            const inputPass = document.getElementById("masterPass").value.trim();
+            const passToTry = inputPass || sessionStorage.getItem("adminPassKey") || "GTC#2000";
+
+            const refreshIcon = document.getElementById("refreshIcon");
+            const refreshLabel = document.getElementById("refreshLabel");
+            const lastUpdatedTime = document.getElementById("lastUpdatedTime");
+            const subsEl = document.getElementById("submissionsList");
+
+            if (refreshIcon) refreshIcon.classList.add("spinning");
+            if (refreshLabel) refreshLabel.textContent = "Loading...";
+
+            let data = null;
+
+            try {
+                const getUrl = `${SCRIPT_URL}?action=get_active_students&adminPass=${encodeURIComponent(passToTry)}&_t=${Date.now()}`;
+                const getRes = await fetch(getUrl, { method: "GET" });
+                data = await getRes.json();
+            } catch (errGet) {
+                try {
+                    const formData = new URLSearchParams();
+                    formData.append("action", "get_active_students");
+                    formData.append("adminPass", passToTry);
+
+                    const postRes = await fetch(SCRIPT_URL, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: formData.toString()
+                    });
+                    data = await postRes.json();
+                } catch (e2) {}
+            }
+
+            if (refreshIcon) refreshIcon.classList.remove("spinning");
+            if (refreshLabel) refreshLabel.textContent = "Refresh";
+            isFetching = false;
+
+            const isSuccess = data && (
+                data.result === "success" || 
+                data.status === "success" || 
+                data.success === true ||
+                Array.isArray(data.students) || 
+                Array.isArray(data.submissions) ||
+                data.stats
+            );
+
+            if (isSuccess) {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                if (lastUpdatedTime) lastUpdatedTime.textContent = `• Updated: ${timeStr}`;
+
+                let incomingStudents = data.students || data.activeStudents || data.active || [];
+                if (!Array.isArray(incomingStudents) && typeof incomingStudents === "object") {
+                    incomingStudents = Object.values(incomingStudents);
+                }
+
+                rawStudentsMap.clear();
+                incomingStudents.forEach(st => {
+                    const cleanRoll = String(st.roll || "").trim().toUpperCase();
+                    const cleanName = String(st.name || "").trim().toUpperCase();
+                    if (!cleanRoll) return;
+
+                    // 🌟 Composite Unique Key: Roll Number + Name
+                    const studentKey = cleanRoll + "___" + cleanName;
+
+                    if (!rawStudentsMap.has(studentKey)) {
+                        rawStudentsMap.set(studentKey, { ...st, roll: cleanRoll });
+                    } else {
+                        const existing = rawStudentsMap.get(studentKey);
+                        const existingTime = existing.timestamp || 0;
+                        const newTime = st.timestamp || 0;
+                        if (newTime >= existingTime) {
+                            rawStudentsMap.set(studentKey, { ...existing, ...st, roll: cleanRoll });
+                        }
+                    }
+                });
+
+                const submissions = data.submissions || data.recentSubmissions || data.results || [];
+                cachedSubmissionsList = submissions;
+
+                const totalStudentsCount = rawStudentsMap.size;
+                const activeStudentsCount = Array.from(rawStudentsMap.values()).filter(st => !st.isOffline).length;
+                const alertCount = Array.from(rawStudentsMap.values()).filter(st => st.incident && st.incident !== "Normal").length;
+                const subCount = submissions.length;
+
+                // Sound notification for new suspicious alert
+                if (isAudioAlertEnabled && alertCount > lastKnownFlaggedCount) {
+                    playSoftChimeAlert();
+                }
+                lastKnownFlaggedCount = alertCount;
+
+                document.getElementById("statOnline").textContent = activeStudentsCount;
+                document.getElementById("statAlerts").textContent = alertCount;
+                document.getElementById("statSubmitted").textContent = subCount;
+                document.getElementById("statTotal").textContent = totalStudentsCount;
+
+                filterRosterList();
+
+                if (submissions && submissions.length > 0) {
+                    let subHtml = "";
+                    submissions.forEach(sub => {
+                        const statusVal = String(sub.status || "COMPLETED").toUpperCase();
+                        const isPass = statusVal.includes("PASS");
+                        const tagClass = isPass ? "sub-tag tag-pass" : "sub-tag tag-fail";
+                        const scoreDisplay = sub.score !== undefined ? sub.score : "0";
+                        const pctDisplay = sub.percentage || "N/A";
+                        const subTime = sub.time || "Today";
+                        const subTimeTaken = sub.timeTaken || "N/A";
+                        const subClass = sub.class || sub.className || "Standard";
+
+                        subHtml += `
+                            <div class="sub-row">
+                                <div class="sub-left">
+                                    <span style="font-size:14.5px; font-weight:800; color:var(--text-heading);">${sub.name || 'Candidate'} <span style="color:var(--primary); font-size:12.5px;">(${sub.roll || 'N/A'})</span></span>
+                                    <div style="font-size:12px; color:var(--text-muted); margin-top:4px; font-weight:600; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                        <span>${subClass}</span>
+                                        <span>•</span>
+                                        <span>${subTime}</span>
+                                        <span>•</span>
+                                        <span class="sub-time-taken-badge">⏱ Time Taken: ${subTimeTaken}</span>
+                                        <span>•</span>
+                                        <span>Correct: ${sub.correct || 0} | Wrong: ${sub.wrong || 0}</span>
+                                    </div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div class="sub-score">${scoreDisplay} Pts (${pctDisplay})</div>
+                                    <span class="${tagClass}">${statusVal}</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    subsEl.innerHTML = subHtml;
+                } else {
+                    subsEl.innerHTML = `<p style="color: var(--text-muted); font-size: 13px; text-align: center; padding: 16px; font-weight: 600;">आज अभी तक कोई टेस्ट सबमिशन दर्ज नहीं हुआ है।</p>`;
+                }
+            } else if (data && (data.message || data.error)) {
+                if (lastUpdatedTime) lastUpdatedTime.textContent = `• Notice: ${data.message || data.error}`;
+            }
+        }
+
+        async function sendProctorWarning() {
+            const roll = document.getElementById("targetRoll").value.trim();
+            const message = document.getElementById("warningMessage").value.trim();
+            const pass = document.getElementById("masterPass").value.trim() || "GTC#2000";
+
+            if (!roll || !message || !pass) {
+                showNotice("⚠️ कृपया रोल नंबर, संदेश और मास्टर पासवर्ड भरें!", false);
+                return;
+            }
+
+            const sendBtn = document.querySelector(".btn-send");
+            if (sendBtn) {
+                sendBtn.disabled = true;
+                sendBtn.innerHTML = `<span>Dispatching... ⏳</span>`;
+            }
+
+            showNotice(`⚡ Dispatching alert to [${roll.toUpperCase()}]...`, true);
+
+            try {
+                const formData = new URLSearchParams();
+                formData.append("action", "send_warning");
+                formData.append("roll", roll);
+                formData.append("message", message);
+                formData.append("adminPass", pass);
+
+                await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: formData.toString()
+                });
+
+                showNotice(`⚡ DISPATCHED! Alert will ring on [${roll.toUpperCase()}] within 1 second. 🚨`, true);
+                document.getElementById("warningMessage").value = "";
+
+            } catch (err) {
+                showNotice("⚠️ नेटवर्क समस्या! पुनः प्रयास करें।", false);
+            } finally {
+                if (sendBtn) {
+                    sendBtn.disabled = false;
+                    sendBtn.innerHTML = `<span>Broadcast Police Siren Warning 🚨</span>`;
+                }
+            }
+        }
+
+        function playSoftChimeAlert() {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                const ctx = new AudioCtx();
+                if (ctx.state === 'suspended') ctx.resume();
+
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+
+                osc.type = "sine";
+                osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+                osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15); // A5
+
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.start();
+                osc.stop(ctx.currentTime + 0.45);
+            } catch (e) {}
+        }
+
+        function testPoliceSiren() {
+            try {
+                const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                const ctx = new AudioCtx();
+                if (ctx.state === 'suspended') ctx.resume();
+
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                const filter = ctx.createBiquadFilter();
+
+                osc.type = "sawtooth";
+                filter.type = "lowpass";
+                filter.frequency.setValueAtTime(1600, ctx.currentTime);
+
+                const now = ctx.currentTime;
+                const wails = 3;
+                const wTime = 0.45;
+
+                osc.frequency.setValueAtTime(650, now);
+                for (let i = 0; i < wails; i++) {
+                    const start = now + (i * wTime);
+                    osc.frequency.linearRampToValueAtTime(1350, start + (wTime / 2));
+                    osc.frequency.linearRampToValueAtTime(650, start + wTime);
+                }
+
+                gain.gain.setValueAtTime(0.01, now);
+                gain.gain.linearRampToValueAtTime(0.45, now + 0.05);
+                gain.gain.setValueAtTime(0.45, now + (wails * wTime) - 0.08);
+                gain.gain.linearRampToValueAtTime(0.001, now + (wails * wTime));
+
+                osc.connect(filter);
+                filter.connect(gain);
+                gain.connect(ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + (wails * wTime));
+
+                showNotice("🚨 Testing Real Police Siren (Sawtooth Synth)...", true);
+            } catch (e) {}
+        }
+
+        function exportSubmissionsToCSV() {
+            if (!cachedSubmissionsList || cachedSubmissionsList.length === 0) {
+                showNotice("⚠️ कोई सबमिशन डेटा उपलब्ध नहीं है!", false);
+                return;
+            }
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Name,Roll No,Class,Score,Correct,Wrong,Percentage,Status,Time Taken,Submission Time\n";
+
+            cachedSubmissionsList.forEach(sub => {
+                const row = [
+                    `"${sub.name || ''}"`,
+                    `"${sub.roll || ''}"`,
+                    `"${sub.class || ''}"`,
+                    sub.score || 0,
+                    sub.correct || 0,
+                    sub.wrong || 0,
+                    `"${sub.percentage || ''}"`,
+                    `"${sub.status || ''}"`,
+                    `"${sub.timeTaken || 'N/A'}"`,
+                    `"${sub.time || ''}"`
+                ];
+                csvContent += row.join(",") + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `GTC_Test_Submissions_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function showNotice(msg, isSuccess) {
+            const notice = document.getElementById("statusNotice");
+            notice.textContent = msg;
+            notice.className = isSuccess ? "toast-success" : "toast-error";
+            notice.style.display = "block";
+            setTimeout(() => {
+                notice.style.display = "none";
+            }, 3500);
+        }
+
+        // Auto polling every 3.5 seconds
+        fetchActiveCandidates();
+        setInterval(fetchActiveCandidates, 3500);
+    </script>
+</body>
+</html>

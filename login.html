@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        const isBlobEnv = window.location.protocol === "blob:" || window.location.href.startsWith("blob:");
+        if (!isBlobEnv) {
+            if (localStorage.getItem("authPassed") !== "true" || sessionStorage.getItem("activeSession") !== "valid") {
+                localStorage.clear();
+                sessionStorage.clear();
+                window.location.replace("index.html");
+            }
+        }
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="referrer" content="no-referrer">
+    <title>Candidate Verification & Login | Gautam Teaching Centre</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Mukta:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #0284c7;
+            --primary-deep: #0369a1;
+            --primary-soft: #f0f9ff;
+            --primary-border: #bae6fd;
+            --accent: #4f46e5;
+            --accent-soft: #eef2ff;
+            --surface: #ffffff;
+            --surface-muted: #f8fafc;
+            --border: #e2e8f0;
+            --border-card: #cbd5e1;
+            --text-heading: #0f172a;
+            --text-body: #334155;
+            --text-muted: #64748b;
+            --warning: #f59e0b;
+            --warning-bg: #fffbeb;
+            --danger: #ef4444;
+            --danger-bg: #fef2f2;
+            --success: #10b981;
+            --success-bg: #ecfdf5;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --radius-xl: 28px;
+            --shadow-card: 0 20px 45px -12px rgba(15, 23, 42, 0.08), 0 0 1px 1px rgba(15, 23, 42, 0.04);
+        }
+
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: #f8fafc;
+            min-height: 100vh;
+            color: var(--text-heading);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            position: relative;
+            overflow-x: hidden;
+            padding: 20px 16px 40px;
+        }
+
+        /* Ambient Glowing Background Lights */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 480px;
+            height: 480px;
+            background: radial-gradient(circle, rgba(199, 210, 254, 0.4) 0%, transparent 70%);
+            top: -100px;
+            left: -100px;
+            border-radius: 50%;
+            filter: blur(85px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            width: 440px;
+            height: 440px;
+            background: radial-gradient(circle, rgba(186, 230, 253, 0.45) 0%, transparent 70%);
+            bottom: -90px;
+            right: -90px;
+            border-radius: 50%;
+            filter: blur(85px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Institutional Portal Header */
+        .portal-header {
+            width: 100%;
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1.5px solid var(--border);
+            border-radius: 20px;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+            margin-bottom: 22px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary-soft);
+            border: 1.5px solid var(--primary-border);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            user-select: none;
+        }
+
+        .brand-text h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: var(--text-heading);
+            text-transform: uppercase;
+            line-height: 1.2;
+        }
+
+        .brand-text p {
+            font-size: 10.5px;
+            color: var(--primary-deep);
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+        }
+
+        .step-badge {
+            background: var(--accent-soft);
+            border: 1.5px solid #c7d2fe;
+            color: var(--accent);
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* 3-Step Progress Track */
+        .progress-track {
+            width: 100%;
+            max-width: 540px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 10;
+            padding: 0 10px;
+        }
+
+        .track-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .track-step.done {
+            color: var(--success);
+        }
+
+        .track-step.active {
+            color: var(--primary);
+        }
+
+        .track-num {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #ffffff;
+            border: 1.5px solid var(--border-card);
+            font-size: 11.5px;
+            font-weight: 800;
+            color: var(--text-muted);
+        }
+
+        .track-step.done .track-num {
+            background: var(--success-bg);
+            border-color: #a7f3d0;
+            color: var(--success);
+        }
+
+        .track-step.active .track-num {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(2, 132, 199, 0.4);
+        }
+
+        .track-line {
+            flex: 1;
+            height: 2px;
+            background: var(--border-card);
+            margin: 0 12px;
+        }
+
+        .track-line.filled {
+            background: #a7f3d0;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 520px;
+            background: var(--surface);
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: 38px 32px 32px;
+            box-shadow: var(--shadow-card);
+            position: relative;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 20%;
+            right: 20%;
+            height: 3.5px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+
+        .card-header-icon {
+            width: 68px;
+            height: 68px;
+            background: var(--primary-soft);
+            border: 1.5px solid var(--primary-border);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px;
+            font-size: 32px;
+            box-shadow: 0 10px 22px -6px rgba(2, 132, 199, 0.22);
+        }
+
+        .login-card h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 23px;
+            font-weight: 900;
+            color: var(--text-heading);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            text-align: center;
+            margin-bottom: 6px;
+        }
+
+        .login-card p.subtitle {
+            font-family: 'Mukta', sans-serif;
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            text-align: center;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .field-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 800;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            padding-left: 2px;
+        }
+
+        .field-input {
+            width: 100%;
+            min-height: 50px;
+            padding: 13px 18px;
+            background: #ffffff;
+            border: 1.6px solid var(--border-card);
+            border-radius: 14px;
+            font-size: 14.5px;
+            font-weight: 700;
+            color: var(--text-heading);
+            outline: none;
+            transition: all 0.25s ease;
+        }
+
+        .field-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.12);
+        }
+
+        .field-input::placeholder {
+            color: #94a3b8;
+            font-weight: 500;
+            font-size: 13.5px;
+        }
+
+        .select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .field-select {
+            width: 100%;
+            min-height: 50px;
+            padding: 13px 44px 13px 18px;
+            background: #ffffff;
+            border: 1.6px solid var(--border-card);
+            border-radius: 14px;
+            font-size: 14.5px;
+            font-weight: 700;
+            color: var(--text-heading);
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            transition: all 0.25s ease;
+        }
+
+        .field-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.12);
+        }
+
+        .field-select option {
+            background-color: #ffffff;
+            color: #0f172a;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 10px;
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 800;
+            transition: transform 0.2s ease;
+        }
+
+        .select-wrapper:focus-within .select-arrow {
+            transform: translateY(-50%) rotate(180deg);
+        }
+
+        .btn-submit {
+            width: 100%;
+            min-height: 54px;
+            margin-top: 10px;
+            background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 8px 22px -4px rgba(37, 99, 235, 0.45);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 26px -4px rgba(37, 99, 235, 0.6);
+        }
+
+        .btn-submit:active {
+            transform: translateY(1px);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .card-footer-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 22px;
+            padding-top: 18px;
+            border-top: 1.5px solid var(--border);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #64748b;
+            font-size: 12.5px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+        }
+
+        .security-flag {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #059669;
+        }
+
+        /* Loading Screen Overlay */
+        #loadingOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99998;
+        }
+
+        .spinner {
+            width: 52px;
+            height: 52px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 0.85s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+
+        #loadingText {
+            color: #0f172a;
+            font-size: 14.5px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        /* Retest Authorization Modal */
+        #dangerModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.72);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            padding: 20px;
+        }
+
+        .danger-card {
+            background: #ffffff;
+            border-radius: 26px;
+            max-width: 440px;
+            width: 100%;
+            padding: 34px 26px;
+            text-align: center;
+            box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.25);
+            border-top: 4.5px solid var(--warning);
+        }
+
+        .passcode-input {
+            width: 100%;
+            padding: 14px;
+            background: #f8fafc;
+            border: 1.5px solid var(--border-card);
+            border-radius: 12px;
+            color: #0f172a;
+            font-size: 15px;
+            text-align: center;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .passcode-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+        }
+
+        .btn-unlock {
+            flex: 1;
+            padding: 13px;
+            background: linear-gradient(135deg, #0284c7, #2563eb);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+        }
+
+        .btn-cancel {
+            padding: 13px 20px;
+            background: #e2e8f0;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        #securityToast {
+            position: fixed;
+            bottom: 24px;
+            background: #0f172a;
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            z-index: 100000;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(15px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 30px 20px 24px;
+            }
+            .login-card h1 {
+                font-size: 20px;
+            }
+            .progress-track {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="securityToast">Please enter your candidate credentials.</div>
+
+    <!-- Institutional Header -->
+    <header class="portal-header">
+        <div class="header-brand">
+            <div class="brand-logo-icon">🎓</div>
+            <div class="brand-text">
+                <h3>GAUTAM TEACHING CENTRE</h3>
+                <p>Examination Portal 2026</p>
+            </div>
+        </div>
+        <div class="step-badge">Stage 2 of 3</div>
+    </header>
+
+    <!-- Visual 3-Stage Progress Track -->
+    <div class="progress-track">
+        <div class="track-step done">
+            <span class="track-num">✓</span>
+            <span>Access Code</span>
+        </div>
+        <div class="track-line filled"></div>
+        <div class="track-step active">
+            <span class="track-num">2</span>
+            <span>Login Info</span>
+        </div>
+        <div class="track-line"></div>
+        <div class="track-step">
+            <span class="track-num">3</span>
+            <span>Exam Room</span>
+        </div>
+    </div>
+
+    <!-- Re-Test Authorization Gate Modal -->
+    <div id="dangerModal">
+        <div class="danger-card">
+            <div style="width: 64px; height: 64px; background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; font-size: 30px; color: #d97706;">
+                🔒
+            </div>
+            <h2 style="font-family:'Outfit', sans-serif; font-size:20px; margin-bottom:8px; color:#0f172a; font-weight:800; text-transform: uppercase;">
+                Re-Test Authorization Required
+            </h2>
+            <p id="retestModalDesc" style="color:var(--text-muted); font-size:13.5px; margin-bottom:20px; line-height:1.6;">
+                A completed test submission is already recorded for this Roll Number today. Invigilator master passcode is required for a re-attempt.
+            </p>
+            <input type="password" id="teacherPassInput" class="passcode-input" placeholder="INVIGILATOR PASSCODE" autocomplete="off">
+            <div id="retestPassError" style="color:var(--danger); font-size:12px; font-weight:700; margin-bottom:16px; display:none;">
+                Invalid passcode! Please verify with your teacher.
+            </div>
+            
+            <div style="display:flex; gap:10px;">
+                <button type="button" class="btn-unlock" onclick="verifyTeacherPassword()">
+                    Authorize & Proceed 🚀
+                </button>
+                <button type="button" class="btn-cancel" onclick="dismissDangerModal()">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verification Loading Spinner Overlay -->
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <div id="loadingText">Verifying credentials with testing server... Please wait ⏳</div>
+    </div>
+
+    <main class="login-card">
+        <div class="card-header-icon">
+            👨‍🎓
+        </div>
+
+        <h1>Candidate Authentication</h1>
+        <p class="subtitle">
+            कृपया अपनी सही परीक्षा जानकारी भरें ताकि आपकी उत्तरपुस्तिका सत्यापित की जा सके।
+        </p>
+
+        <form id="candidateLoginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label class="field-label" for="studentName">Candidate Full Name / छात्र का नाम *</label>
+                <input type="text" id="studentName" class="field-input" placeholder="e.g. Rahul Sharma" required autocomplete="off" autofocus>
+            </div>
+
+            <div class="form-group">
+                <label class="field-label" for="rollNo">Examination Roll Number / अनुक्रमांक *</label>
+                <input type="text" id="rollNo" class="field-input" placeholder="e.g. GTC-104" required autocomplete="off" oninput="formatRollField(this)">
+            </div>
+
+            <div class="form-group">
+                <label class="field-label" for="className">Class or Standard / कक्षा *</label>
+                <input type="text" id="className" class="field-input" placeholder="e.g. 8th Standard" required autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label class="field-label" for="examLang">Question Paper Language / भाषा चुनें *</label>
+                <div class="select-wrapper">
+                    <select id="examLang" class="field-select" required>
+                        <option value="" disabled selected>-- Click to Choose Language / भाषा चुनें --</option>
+                        <option value="hi">🇮🇳 हिन्दी (Hindi Medium)</option>
+                        <option value="en">🇬🇧 English (English Medium)</option>
+                    </select>
+                    <span class="select-arrow">▼</span>
+                </div>
+            </div>
+
+            <button type="submit" id="loginBtn" class="btn-submit">
+                <span>Proceed to Exam Room</span>
+                <span style="font-size: 18px;">🚀</span>
+            </button>
+        </form>
+
+        <div class="card-footer-nav">
+            <a href="auth.html" class="back-link">
+                <span>←</span>
+                <span>Change Access Code</span>
+            </a>
+            <div class="security-flag">
+                <span>🛡️</span>
+                <span>AI Proctor Active</span>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzQysEVoQmSS6w_cEeLYK1g95T16cUT5taIdjXfdDLUsOggqFnVMU5GDrl3C3c-Olvt/exec";
+
+        // Supported invigilator master keys
+        const MASTER_KEYS = ["GTC#2000", "GTC@2026"];
+
+        function formatRollField(input) {
+            if (!input) return;
+            input.value = input.value.replace(/[^a-zA-Z0-9\-#_]/g, '').toUpperCase();
+        }
+
+        function showNotification(text, duration = 3000) {
+            const toast = document.getElementById("securityToast");
+            if (toast) {
+                toast.textContent = text;
+                toast.style.display = "block";
+                setTimeout(() => { toast.style.display = "none"; }, duration);
+            }
+        }
+
+        function toggleLoading(show, message = "") {
+            const loading = document.getElementById("loadingOverlay");
+            const loadingText = document.getElementById("loadingText");
+            if (loading) {
+                loading.style.display = show ? "flex" : "none";
+                if (message && loadingText) loadingText.textContent = message;
+            }
+        }
+
+        function dismissDangerModal() {
+            const modal = document.getElementById("dangerModal");
+            const passInput = document.getElementById("teacherPassInput");
+            const err = document.getElementById("retestPassError");
+            if (modal) modal.style.display = "none";
+            if (passInput) passInput.value = "";
+            if (err) err.style.display = "none";
+        }
+
+        async function verifyTeacherPassword() {
+            const passInput = document.getElementById("teacherPassInput");
+            const errEl = document.getElementById("retestPassError");
+            const enteredPass = passInput ? passInput.value.trim() : "";
+
+            if (!enteredPass) {
+                if (errEl) {
+                    errEl.textContent = "Please enter the invigilator passcode!";
+                    errEl.style.display = "block";
+                }
+                return;
+            }
+
+            if (!MASTER_KEYS.includes(enteredPass)) {
+                if (errEl) {
+                    errEl.textContent = "❌ गलत पासवर्ड! केवल शिक्षक का सही पासवर्ड ही मान्य है।";
+                    errEl.style.display = "block";
+                }
+                if (passInput) passInput.value = "";
+                return;
+            }
+
+            sessionStorage.setItem("adminPassKey", enteredPass);
+            localStorage.setItem("reattemptGranted", "true");
+            localStorage.removeItem("testSubmitted");
+            localStorage.removeItem("gtc_device_locked_date");
+            dismissDangerModal();
+
+            showNotification("✅ Authorization confirmed! Redirecting to exam room...");
+            setTimeout(() => {
+                window.location.replace("test.html");
+            }, 600);
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const nameVal = document.getElementById("studentName").value.trim();
+            const rollRaw = document.getElementById("rollNo").value.trim();
+            const classVal = document.getElementById("className").value.trim();
+            const langSelect = document.getElementById("examLang");
+            const chosenLang = langSelect ? langSelect.value.trim() : "";
+
+            if (!nameVal || !rollRaw || !classVal) {
+                showNotification("⚠️ Please fill in all candidate details!");
+                return;
+            }
+
+            if (!chosenLang) {
+                showNotification("⚠️ कृपया परीक्षा की भाषा चुनें! / Please select paper language!");
+                return;
+            }
+
+            // Standardize and normalize credentials to prevent duplicate entries
+            const cleanRoll = rollRaw.toUpperCase();
+            const todayStr = new Date().toISOString().split('T')[0];
+            const lockedDate = localStorage.getItem("gtc_device_locked_date");
+            const isReattemptGranted = localStorage.getItem("reattemptGranted") === "true";
+
+            // Synchronize normalized storage keys
+            localStorage.setItem("name", nameVal);
+            localStorage.setItem("roll", cleanRoll);
+            localStorage.setItem("class", classVal);
+            localStorage.setItem("temp_roll", cleanRoll);
+            localStorage.setItem("lang", chosenLang);
+            localStorage.setItem("exam_lang", chosenLang);
+            localStorage.setItem("selected_lang", chosenLang);
+            localStorage.setItem("language", chosenLang);
+
+            // Hardware device lock enforcement
+            if (lockedDate === todayStr && !isReattemptGranted) {
+                const modal = document.getElementById("dangerModal");
+                const desc = document.getElementById("retestModalDesc");
+                if (desc) {
+                    desc.innerHTML = `<b style="color:#ef4444;">डिवाइस सुरक्षा लॉक:</b> इस फ़ोन से आज का टेस्ट पहले ही सबमिट किया जा चुका है। दोबारा टेस्ट देने के लिए शिक्षक का पासवर्ड अनिवार्य है।`;
+                }
+                if (modal) modal.style.display = "flex";
+                return;
+            }
+
+            toggleLoading(true, "Checking examination eligibility... 🔍");
+
+            const safetyTimeout = setTimeout(() => {
+                toggleLoading(false);
+                window.location.replace("test.html");
+            }, 2500);
+
+            try {
+                const formData = new URLSearchParams();
+                formData.append("action", "check");
+                formData.append("roll", cleanRoll);
+                formData.append("name", nameVal); // 🌟 Name bhejna zaroori hai taaki same roll wale block na hon
+                formData.append("adminPass", "");
+
+                const response = await fetch(SCRIPT_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: formData.toString()
+                });
+
+                const res = await response.json();
+                clearTimeout(safetyTimeout);
+                toggleLoading(false);
+
+                if (res.status === "blocked") {
+                    const desc = document.getElementById("retestModalDesc");
+                    if (desc && res.message) {
+                        desc.textContent = res.message;
+                    }
+                    const modal = document.getElementById("dangerModal");
+                    if (modal) modal.style.display = "flex";
+                    return;
+                }
+
+                window.location.replace("test.html");
+
+            } catch (error) {
+                clearTimeout(safetyTimeout);
+                toggleLoading(false);
+                window.location.replace("test.html");
+            }
+        }
+    </script>
+</body>
+</html>

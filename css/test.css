@@ -1,0 +1,738 @@
+/* ==========================================================================
+🎓 GAUTAM TEACHING CENTRE (GTC) - CBT EXAMINATION STYLESHEET
+File: test.css
+Specification: NTA-Standard CBT UI with Horizontal Top Question Palette
+Fully Responsive for Mobile, Tablet, and Desktop Devices
+========================================================================== */
+
+/* STREAMING_CHUNK:Configuring root design variables... */
+:root {
+--primary: #0284c7;
+--primary-deep: #0369a1;
+--primary-soft: #f0f9ff;
+--primary-border: #bae6fd;
+--accent: #4f46e5;
+--accent-soft: #eef2ff;
+--surface: #ffffff;
+--surface-muted: #f8fafc;
+--surface-hover: #f1f5f9;
+--border: #e2e8f0;
+--border-card: #cbd5e1;
+--border-subtle: #f1f5f9;
+--text-heading: #0f172a;
+--text-body: #334155;
+--text-muted: #64748b;
+--warning: #f59e0b;
+--warning-bg: #fffbeb;
+--warning-border: #fde68a;
+--danger: #ef4444;
+--danger-deep: #dc2626;
+--danger-bg: #fef2f2;
+--danger-border: #fecaca;
+--success: #10b981;
+--success-deep: #059669;
+--success-bg: #ecfdf5;
+--success-border: #a7f3d0;
+--radius-sm: 8px;
+--radius-md: 14px;
+--radius-lg: 20px;
+--radius-xl: 26px;
+--shadow-soft: 0 10px 25px -5px rgba(15, 23, 42, 0.05);
+--shadow-card: 0 20px 45px -12px rgba(15, 23, 42, 0.08), 0 0 1px 1px rgba(15, 23, 42, 0.04);
+--shadow-elevated: 0 25px 60px -15px rgba(15, 23, 42, 0.14);
+}
+
+/* STREAMING_CHUNK:Configuring base resets and typography... */
+*, *::before, *::after {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+-webkit-tap-highlight-color: transparent;
+-webkit-font-smoothing: antialiased;
+}
+
+html, body {
+overscroll-behavior-y: contain !important;
+overscroll-behavior: none !important;
+touch-action: pan-x pan-y;
+}
+
+body {
+background-color: #f8fafc;
+min-height: 100vh;
+color: var(--text-heading);
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: flex-start;
+padding: 14px 12px 40px;
+position: relative;
+overflow-x: hidden;
+}
+
+/* STREAMING_CHUNK:Styling main examination card container... */
+.exam-container {
+width: 100%;
+max-width: 1060px;
+background: var(--surface);
+border: 1.5px solid var(--border);
+border-radius: var(--radius-xl);
+padding: 24px 26px;
+box-shadow: var(--shadow-card);
+position: relative;
+z-index: 10;
+display: none;
+margin: 6px auto;
+transition: box-shadow 0.25s ease;
+}
+
+.exam-container::before {
+content: '';
+position: absolute;
+top: 0;
+left: 15%;
+right: 15%;
+height: 3.5px;
+background: linear-gradient(90deg, transparent, var(--primary), transparent);
+}
+
+/* STREAMING_CHUNK:Styling top control bar and header elements... */
+.top-bar {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding-bottom: 16px;
+border-bottom: 1.5px solid var(--border);
+margin-bottom: 16px;
+flex-wrap: wrap;
+gap: 12px;
+}
+
+.top-bar h2 {
+font-family: 'Outfit', sans-serif;
+font-size: 20px;
+font-weight: 900;
+letter-spacing: 0.5px;
+color: var(--text-heading);
+text-transform: uppercase;
+line-height: 1.2;
+}
+
+.candidate-live-badge {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+background: var(--primary-soft);
+border: 1.2px solid var(--primary-border);
+color: var(--primary-deep);
+padding: 4px 10px;
+border-radius: 20px;
+font-size: 11.5px;
+font-weight: 800;
+letter-spacing: 0.3px;
+margin-top: 4px;
+}
+
+/* STREAMING_CHUNK:Styling countdown timer pill and language selector... */
+#timer {
+background: linear-gradient(135deg, #0284c7, #2563eb);
+color: #ffffff;
+font-family: 'Outfit', sans-serif;
+font-size: 15px;
+font-weight: 800;
+padding: 8px 18px;
+border-radius: 14px;
+letter-spacing: 0.6px;
+box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
+display: inline-flex;
+align-items: center;
+justify-content: center;
+white-space: nowrap;
+}
+
+.lang-switch-badge {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+background: #ffffff;
+border: 1.5px solid var(--border-card);
+border-radius: 12px;
+padding: 6px 12px;
+box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+}
+
+.lang-switch-select {
+background: transparent;
+color: var(--text-heading);
+font-size: 13px;
+font-weight: 800;
+border: none;
+outline: none;
+cursor: pointer;
+}
+
+/* STREAMING_CHUNK:Styling horizontal top question palette container... */
+.palette-strip-container {
+background: #f8fafc;
+border: 1.5px solid var(--border);
+border-radius: var(--radius-lg);
+padding: 12px 14px;
+margin-bottom: 20px;
+box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02);
+}
+
+.palette-strip-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 10px;
+flex-wrap: wrap;
+gap: 8px;
+}
+
+.palette-strip-title {
+font-family: 'Outfit', sans-serif;
+font-size: 13px;
+font-weight: 800;
+color: var(--text-heading);
+text-transform: uppercase;
+letter-spacing: 0.6px;
+}
+
+/* STREAMING_CHUNK:Designing palette status legend indicators... */
+.pad-legend-horizontal {
+display: flex;
+align-items: center;
+gap: 12px;
+font-size: 11px;
+font-weight: 700;
+color: var(--text-muted);
+}
+
+.pad-legend-horizontal .legend-item {
+display: flex;
+align-items: center;
+gap: 5px;
+}
+
+.legend-indicator {
+width: 13px;
+height: 13px;
+border-radius: 4px;
+flex-shrink: 0;
+}
+
+.legend-answered {
+background: #10b981;
+border: 1px solid #059669;
+}
+
+.legend-unanswered {
+background: #f1f5f9;
+border: 1px solid #cbd5e1;
+}
+
+.legend-current {
+background: #0284c7;
+border: 1px solid #0369a1;
+}
+
+/* STREAMING_CHUNK:Implementing smooth horizontal scroll bar for question pad... */
+.horizontal-pad-scroll {
+display: flex !important;
+flex-direction: row !important;
+gap: 8px;
+overflow-x: auto !important;
+overflow-y: hidden !important;
+padding: 4px 2px 8px;
+scroll-behavior: smooth;
+-webkit-overflow-scrolling: touch;
+touch-action: pan-x;
+scrollbar-width: thin;
+scrollbar-color: #cbd5e1 transparent;
+}
+
+.horizontal-pad-scroll::-webkit-scrollbar {
+height: 6px;
+}
+
+.horizontal-pad-scroll::-webkit-scrollbar-track {
+background: #f1f5f9;
+border-radius: 10px;
+}
+
+.horizontal-pad-scroll::-webkit-scrollbar-thumb {
+background: #cbd5e1;
+border-radius: 10px;
+}
+
+.horizontal-pad-scroll::-webkit-scrollbar-thumb:hover {
+background: #94a3b8;
+}
+
+.pad-btn {
+min-width: 38px;
+width: 38px;
+height: 38px;
+flex-shrink: 0;
+margin: 0;
+border-radius: 10px;
+font-size: 13px;
+font-weight: 800;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: transform 0.15s ease, box-shadow 0.15s ease;
+user-select: none;
+}
+
+.pad-btn:hover {
+transform: scale(1.06);
+}
+
+/* STREAMING_CHUNK:Styling main question section and typography... */
+.main-layout {
+display: block;
+width: 100%;
+}
+
+.question-side {
+display: flex;
+flex-direction: column;
+width: 100%;
+}
+
+.question-box {
+margin-bottom: 20px;
+}
+
+.question-meta-strip {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 12px;
+flex-wrap: wrap;
+gap: 8px;
+}
+
+.question-box h3 {
+font-family: 'Outfit', sans-serif;
+font-size: 14.5px;
+font-weight: 800;
+color: var(--primary-deep);
+text-transform: uppercase;
+letter-spacing: 0.5px;
+}
+
+.marking-pill {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+background: var(--surface-muted);
+border: 1.5px solid var(--border);
+padding: 4px 10px;
+border-radius: 8px;
+font-size: 11.5px;
+font-weight: 800;
+color: var(--text-muted);
+}
+
+.marking-pos {
+color: #059669;
+}
+
+.marking-neg {
+color: #dc2626;
+}
+
+/* STREAMING_CHUNK:Styling active question text box... */
+#question {
+font-size: 18px;
+font-weight: 700;
+color: var(--text-heading);
+line-height: 1.7;
+margin-bottom: 20px;
+padding: 16px 20px;
+background: var(--surface-muted);
+border-left: 5px solid var(--primary);
+border-radius: 16px;
+word-break: break-word;
+user-select: none;
+}
+
+/* STREAMING_CHUNK:Styling interactive options and choice selection... */
+.options {
+display: flex;
+flex-direction: column;
+gap: 11px;
+margin-bottom: 24px;
+}
+
+.option-container {
+display: flex;
+align-items: center;
+background: #ffffff;
+border: 1.8px solid var(--border);
+border-radius: 16px;
+padding: 14px 18px;
+min-height: 54px;
+cursor: pointer;
+transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+user-select: none;
+}
+
+.option-container:hover {
+background: var(--primary-soft);
+border-color: var(--primary-border);
+transform: translateY(-1px);
+}
+
+.option-container.selected {
+background: #f0f9ff !important;
+border-color: var(--primary) !important;
+box-shadow: 0 4px 14px rgba(2, 132, 199, 0.16);
+}
+
+.option-container input[type="radio"] {
+appearance: none;
+-webkit-appearance: none;
+width: 20px;
+height: 20px;
+border: 2px solid var(--border-card);
+border-radius: 50%;
+margin-right: 14px;
+cursor: pointer;
+flex-shrink: 0;
+outline: none;
+position: relative;
+transition: border-color 0.2s ease;
+}
+
+.option-container input[type="radio"]:checked {
+border-color: var(--primary);
+background-color: var(--primary);
+box-shadow: inset 0 0 0 3.5px #ffffff;
+}
+
+.option-container span {
+font-size: 15.5px;
+font-weight: 600;
+color: var(--text-body);
+line-height: 1.55;
+flex: 1;
+}
+
+.option-container.selected span {
+font-weight: 800;
+color: var(--text-heading);
+}
+
+/* STREAMING_CHUNK:Styling bottom navigation and action buttons... */
+.buttons {
+display: flex;
+gap: 12px;
+align-items: center;
+border-top: 1.5px solid var(--border);
+padding-top: 18px;
+flex-wrap: wrap;
+}
+
+.btn-nav, .btn-clear, .btn-submit {
+padding: 13px 24px;
+font-size: 14px;
+font-weight: 800;
+border-radius: 14px;
+cursor: pointer;
+text-transform: uppercase;
+letter-spacing: 0.6px;
+transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+outline: none;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+}
+
+.btn-nav {
+background: #ffffff;
+border: 1.5px solid var(--border-card);
+color: var(--text-heading);
+box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.btn-nav:hover:not(:disabled) {
+border-color: var(--primary);
+background: var(--primary-soft);
+color: var(--primary-deep);
+transform: translateY(-1px);
+}
+
+.btn-nav:disabled {
+opacity: 0.45;
+cursor: not-allowed;
+transform: none;
+}
+
+.btn-clear {
+background: #ffffff;
+border: 1.5px solid #fecaca;
+color: var(--danger-deep);
+}
+
+.btn-clear:hover {
+background: var(--danger-bg);
+border-color: var(--danger);
+transform: translateY(-1px);
+}
+
+.btn-submit {
+margin-left: auto;
+background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+border: none;
+color: #ffffff;
+box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.45);
+}
+
+.btn-submit:hover {
+transform: translateY(-2px);
+box-shadow: 0 12px 24px -4px rgba(37, 99, 235, 0.6);
+}
+
+.btn-submit:active {
+transform: translateY(1px);
+}
+
+/* STREAMING_CHUNK:Styling modal dialogs, loading spinners and alerts... */
+#loadingOverlay {
+position: fixed;
+inset: 0;
+background: rgba(255, 255, 255, 0.96);
+backdrop-filter: blur(8px);
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+z-index: 99998;
+transition: opacity 0.25s ease;
+}
+
+.spinner {
+width: 52px;
+height: 52px;
+border: 4px solid #e2e8f0;
+border-top: 4px solid var(--primary);
+border-radius: 50%;
+animation: spin 0.85s linear infinite;
+margin-bottom: 16px;
+}
+
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+
+#loadingText {
+color: var(--text-heading);
+font-size: 15px;
+font-weight: 700;
+letter-spacing: 0.3px;
+text-align: center;
+padding: 0 20px;
+}
+
+.modal-glass {
+background: #ffffff;
+border: 1.5px solid var(--border);
+border-radius: 26px;
+max-width: 480px;
+width: 100%;
+padding: 34px 26px;
+text-align: center;
+box-shadow: var(--shadow-elevated);
+position: relative;
+}
+
+.passcode-input {
+width: 100%;
+padding: 14px;
+background: #f8fafc;
+border: 1.5px solid var(--border-card);
+border-radius: 12px;
+color: #0f172a;
+font-size: 15px;
+text-align: center;
+font-weight: 800;
+letter-spacing: 2px;
+outline: none;
+box-sizing: border-box;
+margin-bottom: 6px;
+}
+
+.passcode-input:focus {
+border-color: var(--primary);
+box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+}
+
+/* STREAMING_CHUNK:Styling feedback stars and rating inputs... */
+.star-rating {
+cursor: pointer;
+transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s ease;
+user-select: none;
+display: inline-block;
+}
+
+.star-rating:hover {
+transform: scale(1.3);
+}
+
+/* STREAMING_CHUNK:Configuring responsive tablet and mobile breakpoints... */
+@media (max-width: 768px) {
+body {
+padding: 8px 6px 36px;
+}
+
+.exam-container {
+    padding: 16px 14px;
+    border-radius: 20px;
+    margin: 2px 0;
+}
+
+.top-bar {
+    padding-bottom: 12px;
+    margin-bottom: 14px;
+    gap: 8px;
+}
+
+.top-bar h2 {
+    font-size: 16.5px;
+}
+
+.candidate-live-badge {
+    font-size: 11px;
+    padding: 4px 10px;
+}
+
+#timer {
+    padding: 6px 12px;
+    font-size: 12.5px;
+    border-radius: 10px;
+}
+
+.lang-switch-badge {
+    padding: 4px 8px;
+}
+
+.lang-switch-select {
+    font-size: 12px;
+}
+
+.palette-strip-container {
+    padding: 10px 10px 8px;
+    margin-bottom: 14px;
+    border-radius: 14px;
+}
+
+.palette-strip-title {
+    font-size: 12px;
+}
+
+.pad-legend-horizontal {
+    gap: 8px;
+    font-size: 10px;
+}
+
+.pad-btn {
+    min-width: 35px;
+    width: 35px;
+    height: 35px;
+    font-size: 12px;
+    border-radius: 8px;
+}
+
+.question-box h3 {
+    font-size: 12.5px;
+    margin-bottom: 8px;
+}
+
+#question {
+    font-size: 15.5px;
+    line-height: 1.65;
+    padding: 14px 14px;
+    border-radius: 14px;
+    border-left-width: 4px;
+    margin-bottom: 14px;
+}
+
+.options {
+    gap: 9px;
+    margin-bottom: 16px;
+}
+
+.option-container {
+    padding: 12px 14px;
+    min-height: 50px;
+    border-radius: 13px;
+}
+
+.option-container input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 12px;
+}
+
+.option-container span {
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+/* STREAMING_CHUNK:Configuring mobile thumb-friendly 2-column buttons grid... */
+.buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding-top: 14px;
+}
+
+.btn-nav, .btn-clear, .btn-submit {
+    min-height: 46px;
+    font-size: 13px;
+    padding: 10px;
+    border-radius: 12px;
+    text-align: center;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-clear {
+    grid-column: span 2;
+    order: 4;
+    min-height: 42px;
+    font-size: 12.5px;
+}
+
+.btn-submit {
+    margin-left: 0;
+}
+
+
+}
+
+@media (max-width: 480px) {
+.exam-container {
+padding: 14px 12px;
+}
+
+#question {
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.option-container span {
+    font-size: 13.5px;
+}
+
+
+}
